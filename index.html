@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Creation</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <style>
+        .dropdown {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        var txt, name;
+
+        txt = "Введите имя Вашего персонажа";
+        name = prompt(txt);
+        messag(name);
+
+        function messag(name) {
+            document.write("Имя персонажа: " + name + "<br \/>");
+
+            // Добавляем выпадающий список для выбора расы
+            document.write('<div class="dropdown">');
+            document.write('Выберите расу: <select id="race">');
+            document.write('<option value="Человек">Человек</option>');
+            document.write('<option value="Эльф">Эльф</option>');
+            document.write('<option value="Орк">Орк</option>');
+            document.write('<option value="Полуорк">Полуорк</option>');
+            document.write('<option value="Гном">Гном</option>');
+            document.write('<option value="Дварф">Дварф</option>');
+            document.write('<option value="Тифлинг">Тифлинг</option>');
+            document.write('</select></div>');
+
+            // Добавляем выпадающий список для выбора класса
+            document.write('<div class="dropdown">');
+            document.write('Выберите класс: <select id="class">');
+            document.write('<option value="Воин">Воин</option>');
+            document.write('<option value="Волшебник">Волшебник</option>');
+            document.write('<option value="Колдун">Колдун</option>');  
+            document.write('<option value="Жрец">Жрец</option>');     
+            document.write('<option value="Паладин">Паладин</option>');                                    
+            document.write('<option value="Лучник">Лучник</option>');
+            document.write('<option value="Плут">Плут</option>');
+            document.write('</select></div>');
+            
+            // Кнопка для чтения Книги Игрока
+            document.write('<button onclick="showRaceDescription()">Описание расы</button>');
+
+            // Кнопка для чтения Книги Игрока
+            document.write('<button onclick="showClassDescription()">Описание класса</button>');            
+
+            // Кнопка для подтверждения выбора
+            document.write('<button onclick="showSelection()">Подтвердить выбор</button>');
+        }
+
+        function showRaceDescription() {
+            const race = document.getElementById("race").value;
+            let pageNumber;
+            switch (race) {
+                case "Человек":
+                    pageNumber = 10; // Укажите нужную страницу
+                    break;
+                case "Эльф":
+                    pageNumber = 20;
+                    break;
+                case "Орк":
+                    pageNumber = 30;
+                    break;
+                case "Полуорк":
+                    pageNumber = 40;
+                    break;
+                case "Гном":
+                    pageNumber = 50;
+                    break;
+                case "Дварф":
+                    pageNumber = 60;
+                    break;
+                case "Тифлинг":
+                    pageNumber = 70;
+                    break;
+                default:
+                    pageNumber = 1;
+            }
+            openPDF(pageNumber, race, null);
+        }
+
+        function showClassDescription() {
+            const classType = document.getElementById("class").value;
+            let pageNumber;
+            switch (classType) {
+                case "Воин":
+                    pageNumber = 80; 
+                    break;
+                case "Волшебник":
+                    pageNumber = 90;
+                    break;
+                case "Колдун":
+                    pageNumber = 100;
+                    break;
+                case "Жрец":
+                    pageNumber = 110;
+                    break;
+                case "Паладин":
+                    pageNumber = 120;
+                    break;
+                case "Лучник":
+                    pageNumber = 130;
+                    break;
+                case "Плут":
+                    pageNumber = 140;
+                    break;
+                default:
+                    pageNumber = 1;
+            }
+            openPDF(pageNumber, null, classType);
+        }
+
+        function openPDF(pageNumber, race, classType) {
+            let url;
+            if (race) {
+                switch (race) {
+                    case "Человек":
+                        url = '5e_Players_Handbook_-_Kniga_igroka_RUS.pdf';
+                        break;
+                    case "Эльф":
+                        url = 'path/to/elf.pdf';
+                        break;
+                    // Add cases for other races
+                    default:
+                        url = 'path/to/default.pdf';
+                }
+            } else if (classType) {
+                switch (classType) {
+                    case "Воин":
+                        url = 'path/to/warrior.pdf';
+                        break;
+                    case "Волшебник":
+                        url = 'path/to/wizard.pdf';
+                        break;
+                    // Add cases for other classes
+                    default:
+                        url = 'path/to/default.pdf';
+                }
+            }
+
+            const loadingTask = pdfjsLib.getDocument(url);
+            loadingTask.promise.then(pdf => {
+                pdf.getPage(pageNumber).then(page => {
+                    const scale = 1.5;
+                    const viewport = page.getViewport({ scale: scale });
+
+                    const canvas = document.createElement('canvas');
+                    document.body.appendChild(canvas);
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
+                });
+            }).catch(error => {
+                console.error('Error opening PDF:', error);
+            });
+        }
+
+        function showSelection() {
+            const race = document.getElementById("race").value;
+            const classType = document.getElementById("class").value;
+            document.write("Вы выбрали расу: " + race + "<br \/>");
+            document.write("Вы выбрали класс: " + classType + "<br \/>");
+        }
+    </script>
+</body>
+</html>
