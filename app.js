@@ -1,28 +1,17 @@
-const http = require('http');
-const fs = require('fs');
-let counter = 0;
-var name;
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = 3000;
 
-const server = http.createServer((request, response) => {
-    if (request.url === '/favicon.ico') {
-        fs.readFile('./favicon.ico', (err, data) => {
-            if (err) {
-                response.writeHead(404, { 'Content-Type': 'text/plain' });
-                response.write('404 Not Found');
-            } else {
-                response.writeHead(200, { 'Content-Type': 'image/x-icon' });
-                response.write(data);
-            }
-            response.end();
-        });
-    } else {
-        counter++;
-        response.writeHead(200, { 'Content-Type': 'text/plain' });
-        response.write('Hello friend ' + counter);
-        response.end();
-    }
+// Serve static files (e.g., HTML, CSS, JS)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Route to serve the main HTML file
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-server.listen(3003, () => {
-    console.log('Server is listening on port 3003');
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
