@@ -56,96 +56,7 @@
             document.write('<button onclick="showSelection()">Подтвердить выбор</button>');
         }
 
-        function showRaceDescription() {
-            const race = document.getElementById("race").value;
-            let pageNumber;
-            switch (race) {
-                case "Человек":
-                    pageNumber = 10; // Укажите нужную страницу
-                    break;
-                case "Эльф":
-                    pageNumber = 20;
-                    break;
-                case "Орк":
-                    pageNumber = 30;
-                    break;
-                case "Полуорк":
-                    pageNumber = 40;
-                    break;
-                case "Гном":
-                    pageNumber = 50;
-                    break;
-                case "Дварф":
-                    pageNumber = 60;
-                    break;
-                case "Тифлинг":
-                    pageNumber = 70;
-                    break;
-                default:
-                    pageNumber = 1;
-            }
-            openPDF(pageNumber, race, null);
-        }
-
-        function showClassDescription() {
-            const classType = document.getElementById("class").value;
-            let pageNumber;
-            switch (classType) {
-                case "Воин":
-                    pageNumber = 80; 
-                    break;
-                case "Волшебник":
-                    pageNumber = 90;
-                    break;
-                case "Колдун":
-                    pageNumber = 100;
-                    break;
-                case "Жрец":
-                    pageNumber = 110;
-                    break;
-                case "Паладин":
-                    pageNumber = 120;
-                    break;
-                case "Лучник":
-                    pageNumber = 130;
-                    break;
-                case "Плут":
-                    pageNumber = 140;
-                    break;
-                default:
-                    pageNumber = 1;
-            }
-            openPDF(pageNumber, null, classType);
-        }
-
-        function openPDF(pageNumber, race, classType) {
-            let url;
-            if (race) {
-                switch (race) {
-                    case "Человек":
-                        url = '5e_Players_Handbook_-_Kniga_igroka_RUS.pdf';
-                        break;
-                    case "Эльф":
-                        url = 'path/to/elf.pdf';
-                        break;
-                    // Add cases for other races
-                    default:
-                        url = 'path/to/default.pdf';
-                }
-            } else if (classType) {
-                switch (classType) {
-                    case "Воин":
-                        url = 'path/to/warrior.pdf';
-                        break;
-                    case "Волшебник":
-                        url = 'path/to/wizard.pdf';
-                        break;
-                    // Add cases for other classes
-                    default:
-                        url = 'path/to/default.pdf';
-                }
-            }
-
+        function openPDF(url, pageNumber) {
             const loadingTask = pdfjsLib.getDocument(url);
             loadingTask.promise.then(pdf => {
                 pdf.getPage(pageNumber).then(page => {
@@ -167,6 +78,68 @@
             }).catch(error => {
                 console.error('Error opening PDF:', error);
             });
+        }
+
+        function showRaceDescription() {
+            const race = document.getElementById("race").value;
+            let url;
+            switch (race) {
+                case "Человек":
+                    url = '5e_Players_Handbook_-_Kniga_igroka_RUS.pdf';
+                    break;
+                case "Эльф":
+                    url = 'Lore/Races/dwarf.pdf';
+                    break;
+                case "Орк":
+                    url = 'Lore/Races/dwarf.pdf';
+                    break;
+                case "Полуорк":
+                    url = 'Lore/Races/dwarf.pdf';
+                    break;s
+                case "Гном":
+                    url = 'Lore/Races/dwarf.pdf';
+                    break;
+                case "Дварф":
+                    url = 'Lore/Races/dwarf.pdf';
+                    break;
+                case "Тифлинг":
+                    url = 'Lore/Races/dwarf.pdf';
+                    break;
+                default:
+                    url = 'Lore/Races/dwarf.pdf';
+            }
+            openPDF(url, 0);
+        }
+
+        function showClassDescription() {
+            const classType = document.getElementById("class").value;
+            let url;
+            switch (classType) {
+                case "Воин":
+                    url = 'path/to/warrior.pdf';
+                    break;
+                case "Волшебник":
+                    url = 'path/to/wizard.pdf';
+                    break;
+                case "Колдун":
+                    url = 'path/to/sorcerer.pdf';
+                    break;
+                case "Жрец":
+                    url = 'path/to/cleric.pdf';
+                    break;
+                case "Паладин":
+                    url = 'path/to/paladin.pdf';
+                    break;
+                case "Лучник":
+                    url = 'path/to/archer.pdf';
+                    break;
+                case "Плут":
+                    url = 'path/to/rogue.pdf';
+                    break;
+                default:
+                    url = 'path/to/default.pdf';
+            }
+            openPDF(url, 0);
         }
 
         function showSelection() {
