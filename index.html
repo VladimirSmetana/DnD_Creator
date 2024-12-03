@@ -9,6 +9,9 @@
         .dropdown {
             margin: 10px 0;
         }
+        #pdf-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -56,28 +59,73 @@
             document.write('<button onclick="showSelection()">Подтвердить выбор</button>');
         }
 
+        let pdfDoc = null,
+            pageNum = 1,
+            pageRendering = false,
+            pageNumPending = null;
+
         function openPDF(url, pageNumber) {
             const loadingTask = pdfjsLib.getDocument(url);
             loadingTask.promise.then(pdf => {
-                pdf.getPage(pageNumber).then(page => {
-                    const scale = 1.5;
-                    const viewport = page.getViewport({ scale: scale });
-
-                    const canvas = document.createElement('canvas');
-                    document.body.appendChild(canvas);
-                    const context = canvas.getContext('2d');
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: viewport
-                    };
-                    page.render(renderContext);
-                });
+                pdfDoc = pdf;
+                pageNum = pageNumber;
+                renderPage(pageNum);
             }).catch(error => {
                 console.error('Error opening PDF:', error);
             });
+        }
+
+        function renderPage(num) {
+            pageRendering = true;
+            pdfDoc.getPage(num).then(page => {
+                const scale = 1.5;
+                const viewport = page.getViewport({ scale: scale });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext).promise.then(() => {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+
+                const pdfContainer = document.getElementById('pdf-container');
+                pdfContainer.innerHTML = ''; // Clear the container
+                pdfContainer.appendChild(canvas);
+            });
+        }
+
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        function onPrevPage() {
+            if (pageNum <= 1) {
+                return;
+            }
+            pageNum--;
+            queueRenderPage(pageNum);
+        }
+
+        function onNextPage() {
+            if (pageNum >= pdfDoc.numPages) {
+                return;
+            }
+            pageNum++;
+            queueRenderPage(pageNum);
         }
 
         function showRaceDescription() {
@@ -95,7 +143,7 @@
                     break;
                 case "Полуорк":
                     url = 'Lore/Races/dwarf.pdf';
-                    break;s
+                    break;
                 case "Гном":
                     url = 'Lore/Races/dwarf.pdf';
                     break;
@@ -108,7 +156,7 @@
                 default:
                     url = 'Lore/Races/dwarf.pdf';
             }
-            openPDF(url, 0);
+            openPDF(url, 1);
         }
 
         function showClassDescription() {
@@ -139,7 +187,7 @@
                 default:
                     url = 'path/to/default.pdf';
             }
-            openPDF(url, 0);
+            openPDF(url, 1);
         }
 
         function showSelection() {
@@ -149,5 +197,8 @@
             document.write("Вы выбрали класс: " + classType + "<br \/>");
         }
     </script>
+    <div id="pdf-container"></div>
+    <button onclick="onPrevPage()">Предыдущая страница</button>
+    <button onclick="onNextPage()">Следующая страница</button>
 </body>
 </html>
