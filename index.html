@@ -11,6 +11,25 @@
         }
         #pdf-container {
             margin-top: 20px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+        }
+        body {
+            background-image: url('background.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #race-label {
+            color: white;
+        }
+        #controls {
+            margin-right: 50%;
         }
     </style>
 </head>
@@ -27,7 +46,7 @@
 
             // Добавляем выпадающий список для выбора расы
             document.write('<div class="dropdown">');
-            document.write('Выберите расу: <select id="race">');
+            document.write('<label id="race-label">Выберите расу:</label> <select id="race">');
             document.write('<option value="Человек">Человек</option>');
             document.write('<option value="Эльф">Эльф</option>');
             document.write('<option value="Орк">Орк</option>');
@@ -39,7 +58,7 @@
 
             // Добавляем выпадающий список для выбора класса
             document.write('<div class="dropdown">');
-            document.write('Выберите класс: <select id="class">');
+            document.write('<label id="race-label">Выберите класс:</label> <select id="class">');
             document.write('<option value="Воин">Воин</option>');
             document.write('<option value="Волшебник">Волшебник</option>');
             document.write('<option value="Колдун">Колдун</option>');  
@@ -197,8 +216,10 @@
             document.write("Вы выбрали класс: " + classType + "<br \/>");
         }
     </script>
+    <div id="controls">
+        <button onclick="onPrevPage()"> << </button>
+        <button onclick="onNextPage()"> >> </button>
+    </div>
     <div id="pdf-container"></div>
-    <button onclick="onPrevPage()">Предыдущая страница</button>
-    <button onclick="onNextPage()">Следующая страница</button>
 </body>
 </html>
